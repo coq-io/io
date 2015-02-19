@@ -1,17 +1,17 @@
-Module Effect.
+Module Effects.
   Record t := New {
     command : Type;
     answer : command -> Type }.
-End Effect.
+End Effects.
 
 (** Computations with I/Os. *)
 Module C.
   (** A computation can either return a pure value, or do an external call and
       wait for the answer to run another computation. *)
-  Inductive t (E : Effect.t) (A : Type) : Type :=
+  Inductive t (E : Effects.t) (A : Type) : Type :=
   | Ret : forall (x : A), t E A
-  | Call : forall (command : Effect.command E),
-    (Effect.answer E command -> t E A) -> t E A
+  | Call : forall (command : Effects.command E),
+    (Effects.answer E command -> t E A) -> t E A
   | Let : forall (B : Type), t E B -> (B -> t E A) -> t E A.
   Arguments Ret {E A} _.
   Arguments Call _ {A} _ _.
@@ -20,12 +20,12 @@ Module C.
   (** Some optional notations. *)
   Module Notations.
     (** A nicer notation for `Ret`. *)
-    Definition ret {E : Effect.t} {A : Type} (x : A) : t E A :=
+    Definition ret {E : Effects.t} {A : Type} (x : A) : t E A :=
       Ret x.
 
     (** A nicer notation for `Call`. *)
-    Definition call (E : Effect.t) {A : Type} (command : Effect.command E)
-      (handler : Effect.answer E command -> t E A) : t E A :=
+    Definition call (E : Effects.t) {A : Type} (command : Effects.command E)
+      (handler : Effects.answer E command -> t E A) : t E A :=
       Call E command handler.
 
     (** Nicer notation for `Let`. *)
@@ -48,10 +48,10 @@ End C.
 Module Run.
   (** A run is an execution of the program with explicit answers for the
       system calls. We define a run by induction on a computation. *)
-  Inductive t {E : Effect.t} : forall {A}, C.t E A -> A -> Type :=
+  Inductive t {E : Effects.t} : forall {A}, C.t E A -> A -> Type :=
   | Ret : forall {A} (x : A), t (C.Ret x) x
-  | Call : forall {A} (command : Effect.command E) (answer : Effect.answer E command)
-    {handler : Effect.answer E command -> C.t E A} {x : A}, t (handler answer) x ->
+  | Call : forall {A} (command : Effects.command E) (answer : Effects.answer E command)
+    {handler : Effects.answer E command -> C.t E A} {x : A}, t (handler answer) x ->
     t (C.Call E command handler) x
   | Let : forall {A B} {c_x : C.t E B} {x : B} {c_f : B -> C.t E A} {y : A},
     t c_x x -> t (c_f x) y -> t (C.Let c_x c_f) y
@@ -86,7 +86,7 @@ Module Unix.
     | Print _ => bool
     end.
 
-  Definition effect : Effect.t := {|
-    Effect.command := t;
-    Effect.answer := answer |}.
+  Definition effect : Effects.t := {|
+    Effects.command := t;
+    Effects.answer := answer |}.
 End Unix.

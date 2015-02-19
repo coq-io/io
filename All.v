@@ -14,7 +14,7 @@ Module C.
     (Effect.answer E command -> t E A) -> t E A
   | Let : forall (B : Type), t E B -> (B -> t E A) -> t E A.
   Arguments Ret {E A} _.
-  Arguments Call {E A} _ _.
+  Arguments Call _ {A} _ _.
   Arguments Let {E A B} _ _.
 
   (** Some optional notations. *)
@@ -23,20 +23,10 @@ Module C.
     Definition ret {E : Effect.t} {A : Type} (x : A) : t E A :=
       Ret x.
 
-    (** External call. *)
-    Notation "'call!' answer ':=' command 'in' X" :=
-      (Call command (fun answer => X))
-      (at level 200, answer ident, command at level 100, X at level 200).
-
-    (** External call with typed answer. *)
-    Notation "'call!' answer : A ':=' command 'in' X" :=
-      (Call command (fun (answer : A) => X))
-      (at level 200, answer ident, command at level 100, A at level 200, X at level 200).
-
-    (** External call ignoring the answer. *)
-    Notation "'do_call!' command 'in' X" :=
-      (Call command (fun _ => X))
-      (at level 200, command at level 100, X at level 200).
+    (** A nicer notation for `Call`. *)
+    Definition call (E : Effect.t) {A : Type} (command : Effect.command E)
+      (handler : Effect.answer E command -> t E A) : t E A :=
+      Call E command handler.
 
     (** Nicer notation for `Let`. *)
     Notation "'let!' x ':=' X 'in' Y" :=
@@ -62,9 +52,41 @@ Module Run.
   | Ret : forall {A} (x : A), t (C.Ret x) x
   | Call : forall {A} (command : Effect.command E) (answer : Effect.answer E command)
     {handler : Effect.answer E command -> C.t E A} {x : A}, t (handler answer) x ->
-    t (C.Call command handler) x
+    t (C.Call E command handler) x
   | Let : forall {A B} {c_x : C.t E B} {x : B} {c_f : B -> C.t E A} {y : A},
     t c_x x -> t (c_f x) y -> t (C.Let c_x c_f) y
   | Intro : forall {A} (B : Type) {c : C.t E A} {x : A}, (B -> t c x) -> t c x.
-
 End Run.
+
+Module Unix.
+  Require Import ListString.All.
+
+  Inductive t :=
+  (** List the files of a directory. *)
+  | ListFiles (directory : LString.t)
+  (** Read the content of a file. *)
+  | ReadFile (file_name : LString.t)
+  (** Update (or create) a file with some content. *)
+  | WriteFile (file_name : LString.t) (content : LString.t)
+  (** Delete a file. *)
+  | DeleteFile (file_name : LString.t)
+  (** Run a command. *)
+  | System (command : LString.t)
+  (** Print a message on the standard output. *)
+  | Print (message : LString.t).
+
+  (** The type of an answer for a command depends on the value of the command. *)
+  Definition answer (command : t) : Type :=
+    match command with
+    | ListFiles _ => option (list LString.t)
+    | ReadFile _ => option LString.t
+    | WriteFile _ _ => bool
+    | DeleteFile _ => bool
+    | System _ => option bool
+    | Print _ => bool
+    end.
+
+  Definition effect : Effect.t := {|
+    Effect.command := t;
+    Effect.answer := answer |}.
+End Unix.

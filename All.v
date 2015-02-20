@@ -1,3 +1,4 @@
+(** Effects are a type of commands and the type of answers to these commands. *)
 Module Effects.
   Record t := New {
     command : Type;
@@ -6,8 +7,8 @@ End Effects.
 
 (** Computations with I/Os. *)
 Module C.
-  (** A computation can either return a pure value, or do an external call and
-      wait for the answer to run another computation. *)
+  (** A computation can either return a pure value, do an external call or
+      compose two computations. *)
   Inductive t (E : Effects.t) : Type -> Type :=
   | Ret : forall {A : Type} (x : A), t E A
   | Call : forall (command : Effects.command E), t E (Effects.answer E command)
@@ -27,7 +28,7 @@ Module C.
       : t E (Effects.answer E command) :=
       Call E command.
 
-    (** Nicer notation for `Let`. *)
+    (** A nicer notation for `Let`. *)
     Notation "'let!' x ':=' X 'in' Y" :=
       (Let X (fun x => Y))
       (at level 200, x ident, X at level 100, Y at level 200).
@@ -45,8 +46,10 @@ Module C.
 End C.
 
 Module Run.
-  (** A run is an execution of the program with explicit answers for the
-      system calls. We define a run by induction on a computation. *)
+  (** A run is an execution of a computation with explicit answers for the
+      external calls. We define a run by induction on a computation. The `Intro`
+      operator is used to introduce a value of a given type, to help to answer
+      to the calls. *)
   Inductive t : forall {E : Effects.t} {A : Type}, C.t E A -> A -> Type :=
   | Ret : forall {E A} (x : A), t (C.Ret (E := E) x) x
   | Call : forall E (command : Effects.command E) (answer : Effects.answer E command),

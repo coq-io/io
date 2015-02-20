@@ -56,4 +56,5 @@ Module Run.
   | Let : forall {A B} {c_x : C.t E B} {x : B} {c_f : B -> C.t E A} {y : A},
     t c_x x -> t (c_f x) y -> t (C.Let c_x c_f) y
   | Intro : forall {A} (B : Type) {c : C.t E A} {x : A}, (B -> t c x) -> t c x.
+  Arguments Call _ {A} _ _ {handler x} _.
 End Run.

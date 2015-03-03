@@ -1,6 +1,6 @@
--R . Io
+-R src Io
 
-All.v
-C.v
-Effects.v
-Run.v
+src/All.v
+src/C.v
+src/Effects.v
+src/Run.v

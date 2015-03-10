@@ -5,10 +5,14 @@ Require Import Effects.
 Inductive t (E : Effects.t) : Type -> Type :=
 | Ret : forall {A : Type} (x : A), t E A
 | Call : forall (command : Effects.command E), t E (Effects.answer E command)
-| Let : forall {A B : Type}, t E A -> (A -> t E B) -> t E B.
+| Let : forall {A B : Type}, t E A -> (A -> t E B) -> t E B
+| Join : forall {A B : Type}, t E A -> t E B -> t E (A * B)
+| First : forall {A B : Type}, t E A -> t E B -> t E (A + B).
 Arguments Ret {E A} _.
 Arguments Call E _.
 Arguments Let {E A B} _ _.
+Arguments Join {E A B} _ _.
+Arguments First {E A B} _ _.
 
 (** Some optional notations. *)
 Module Notations.
@@ -35,4 +39,14 @@ Module Notations.
   Notation "'do!' X 'in' Y" :=
     (Let X (fun _ => Y))
     (at level 200, X at level 100, Y at level 200).
+
+  (** A nicer notation for `Join`. *)
+  Definition join {E : Effects.t} {A B : Type} (x : t E A) (y : t E B)
+    : t E (A * B) :=
+    Join x y.
+
+  (** A nicer notation for `First`. *)
+  Definition first {E : Effects.t} {A B : Type} (x : t E A) (y : t E B)
+    : t E (A + B) :=
+    First x y.
 End Notations.

@@ -35,9 +35,9 @@ Module Notations.
     (Let X (fun (x : A) => Y))
     (at level 200, x ident, X at level 100, A at level 200, Y at level 200).
 
-  (** Let ignoring the answer. *)
+  (** Let ignoring the unit answer. *)
   Notation "'do!' X 'in' Y" :=
-    (Let X (fun _ => Y))
+    (Let X (fun (_ : unit) => Y))
     (at level 200, X at level 100, Y at level 200).
 
   (** A nicer notation for `Join`. *)

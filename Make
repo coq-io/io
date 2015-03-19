@@ -2,5 +2,5 @@
 
 src/All.v
 src/C.v
-src/Effects.v
+src/Effect.v
 src/Run.v

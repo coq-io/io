@@ -13,6 +13,25 @@ Arguments Let {E A B} _ _.
 Arguments Join {E A B} _ _.
 Arguments First {E A B} _ _.
 
+(** A nicer notation for `Ret`. *)
+Definition ret {E : Effect.t} {A : Type} (x : A) : t E A :=
+  Ret x.
+
+(** A nicer notation for `Call`. *)
+Definition call (E : Effect.t) (command : Effect.command E)
+  : t E (Effect.answer E command) :=
+  Call E command.
+
+(** A nicer notation for `Join`. *)
+Definition join {E : Effect.t} {A B : Type} (x : t E A) (y : t E B)
+  : t E (A * B) :=
+  Join x y.
+
+(** A nicer notation for `First`. *)
+Definition first {E : Effect.t} {A B : Type} (x : t E A) (y : t E B)
+  : t E (A + B) :=
+  First x y.
+
 (** A run from an effect to a more general effect. *)
 Fixpoint run {E1 E2 : Effect.t} {A : Type}
   (run_command : forall (c : Effect.command E1), C.t E2 (Effect.answer E1 c))
@@ -27,15 +46,6 @@ Fixpoint run {E1 E2 : Effect.t} {A : Type}
 
 (** Some optional notations. *)
 Module Notations.
-  (** A nicer notation for `Ret`. *)
-  Definition ret {E : Effect.t} {A : Type} (x : A) : t E A :=
-    Ret x.
-
-  (** A nicer notation for `Call`. *)
-  Definition call (E : Effect.t) (command : Effect.command E)
-    : t E (Effect.answer E command) :=
-    Call E command.
-
   (** A nicer notation for `Let`. *)
   Notation "'let!' x ':=' X 'in' Y" :=
     (Let X (fun x => Y))
@@ -50,14 +60,4 @@ Module Notations.
   Notation "'do!' X 'in' Y" :=
     (Let X (fun (_ : unit) => Y))
     (at level 200, X at level 100, Y at level 200).
-
-  (** A nicer notation for `Join`. *)
-  Definition join {E : Effect.t} {A B : Type} (x : t E A) (y : t E B)
-    : t E (A * B) :=
-    Join x y.
-
-  (** A nicer notation for `First`. *)
-  Definition first {E : Effect.t} {A B : Type} (x : t E A) (y : t E B)
-    : t E (A + B) :=
-    First x y.
 End Notations.

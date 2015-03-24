@@ -7,6 +7,9 @@ Inductive t (E : Effect.t) : Type -> Type :=
 | Let : forall (A B : Type), t E A -> (A -> t E B) -> t E B
 | Join : forall {A B : Type}, t E A -> t E B -> t E (A * B)
 | First : forall {A B : Type}, t E A -> t E B -> t E (A + B).
+
+(** The implicit arguments so that the `match` command works both with
+    Coq 8.4 and Coq 8.5. *)
 Arguments Call {E} _.
 Arguments Let {E} _ _ _ _.
 Arguments Join {E} _ _ _ _.

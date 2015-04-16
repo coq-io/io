@@ -5,15 +5,15 @@ Inductive t (E : Effect.t) : Type -> Type :=
 | Ret : forall {A : Type} (x : A), t E A
 | Call : forall (command : Effect.command E), t E (Effect.answer E command)
 | Let : forall (A B : Type), t E A -> (A -> t E B) -> t E B
-| Join : forall {A B : Type}, t E A -> t E B -> t E (A * B)
-| First : forall {A B : Type}, t E A -> t E B -> t E (A + B).
+| Choose : forall (A : Type), t E A -> t E A -> t E A
+| Join : forall (A B : Type), t E A -> t E B -> t E (A * B).
 
 (** The implicit arguments so that the `match` command works both with
     Coq 8.4 and Coq 8.5. *)
 Arguments Call {E} _.
 Arguments Let {E} _ _ _ _.
+Arguments Choose {E} _ _ _.
 Arguments Join {E} _ _ _ _.
-Arguments First {E} _ _ _ _.
 
 (** A nicer notation for `Ret`. *)
 Definition ret {E : Effect.t} {A : Type} (x : A) : t E A :=
@@ -24,27 +24,14 @@ Definition call (E : Effect.t) (command : Effect.command E)
   : t E (Effect.answer E command) :=
   Call (E := E) command.
 
+(** A nicer notation for `Choose`. *)
+Definition choose {E : Effect.t} {A : Type} (x1 x2 : t E A) : t E A :=
+  Choose _ x1 x2.
+
 (** A nicer notation for `Join`. *)
 Definition join {E : Effect.t} {A B : Type} (x : t E A) (y : t E B)
   : t E (A * B) :=
   Join _ _ x y.
-
-(** A nicer notation for `First`. *)
-Definition first {E : Effect.t} {A B : Type} (x : t E A) (y : t E B)
-  : t E (A + B) :=
-  First _ _ x y.
-
-(** A run from an effect to a more general effect. *)
-Fixpoint run {E1 E2 : Effect.t} {A : Type}
-  (run_command : forall (c : Effect.command E1), C.t E2 (Effect.answer E1 c))
-  (x : C.t E1 A) : C.t E2 A :=
-  match x with
-  | Ret _ x => Ret _ x
-  | Call c => run_command c
-  | Let _ _ x f => Let _ _ (run run_command x) (fun x => run run_command (f x))
-  | Join _ _ x y => Join _ _ (run run_command x) (run run_command y)
-  | First _ _ x y => First _ _ (run run_command x) (run run_command y)
-  end.
 
 (** Some optional notations. *)
 Module Notations.

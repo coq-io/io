@@ -2,7 +2,7 @@ Require Import Effect.
 
 (** The description of a computation. *)
 Inductive t (E : Effect.t) : Type -> Type :=
-| Ret : forall {A : Type} (x : A), t E A
+| Ret : forall (A : Type) (x : A), t E A
 | Call : forall (command : Effect.command E), t E (Effect.answer E command)
 | Let : forall (A B : Type), t E A -> (A -> t E B) -> t E B
 | Choose : forall (A : Type), t E A -> t E A -> t E A
@@ -10,6 +10,7 @@ Inductive t (E : Effect.t) : Type -> Type :=
 
 (** The implicit arguments so that the `match` command works both with
     Coq 8.4 and Coq 8.5. *)
+Arguments Ret {E} _ _.
 Arguments Call {E} _.
 Arguments Let {E} _ _ _ _.
 Arguments Choose {E} _ _ _.
@@ -17,7 +18,7 @@ Arguments Join {E} _ _ _ _.
 
 (** A nicer notation for `Ret`. *)
 Definition ret {E : Effect.t} {A : Type} (x : A) : t E A :=
-  Ret E x.
+  Ret A x.
 
 (** A nicer notation for `Call`. *)
 Definition call (E : Effect.t) (command : Effect.command E)
@@ -26,12 +27,12 @@ Definition call (E : Effect.t) (command : Effect.command E)
 
 (** A nicer notation for `Choose`. *)
 Definition choose {E : Effect.t} {A : Type} (x1 x2 : t E A) : t E A :=
-  Choose _ x1 x2.
+  Choose A x1 x2.
 
 (** A nicer notation for `Join`. *)
 Definition join {E : Effect.t} {A B : Type} (x : t E A) (y : t E B)
   : t E (A * B) :=
-  Join _ _ x y.
+  Join A B x y.
 
 (** Some optional notations. *)
 Module Notations.

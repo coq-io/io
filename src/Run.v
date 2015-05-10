@@ -15,3 +15,11 @@ Inductive t : forall {E : Effect.t} {A : Type}, C.t E A -> A -> Type :=
   t c_x2 x2 -> t (C.Choose A c_x1 c_x2) x2
 | Join : forall {E A B} {c_x : C.t E A} {x : A} {c_y : C.t E B} {y : B},
   t c_x x -> t c_y y -> t (C.Join A B c_x c_y) (x, y).
+
+(** Run the let of a ret. *)
+Definition let_ret {E A B} {v : A} {f : A -> C.t E B} {y : B}
+  (run_f_v : t (f v) y) : t (C.Let _ _ (C.Ret _ v) f) y.
+  eapply Let.
+  - apply Ret.
+  - exact run_f_v.
+Defined.

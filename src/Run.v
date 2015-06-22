@@ -15,6 +15,12 @@ Inductive t {E : Effect.t} : forall {A : Type}, C.t E A -> A -> Type :=
   t c_x2 x2 -> t (C.Choose A c_x1 c_x2) x2
 | Join : forall {A B} {c_x : C.t E A} {x : A} {c_y : C.t E B} {y : B},
   t c_x x -> t c_y y -> t (C.Join A B c_x c_y) (x, y).
+Arguments Ret {E A} _.
+Arguments Call _ _ _.
+Arguments Let {E A B c_x x c_f y} _ _.
+Arguments ChooseLeft {E A c_x1 c_x2 x1} _.
+Arguments ChooseRight {E A c_x1 c_x2 x2} _.
+Arguments Join {E A B c_x x c_y y} _ _.
 
 (** Run the let of a ret. *)
 Definition let_ret {E A B} {v : A} {f : A -> C.t E B} {y : B}

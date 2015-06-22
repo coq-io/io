@@ -10,4 +10,4 @@ Using OPAM for Coq:
     opam install coq:io
 
 ## Documentation
-See the complete documentation online on [doc/io](http://clarus.github.io/doc/io/toc.html).
+See the complete documentation online on [v3.1.0](http://coq-io.github.io/doc/io/3.1.0/toc.html).

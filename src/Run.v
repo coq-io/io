@@ -3,7 +3,7 @@ Require Import C.
 
 (** A specification is an execution of a computation with explicit answers for
     the external calls. *)
-Inductive t {E : Effect.t} : forall {A : Type}, C.t E A -> A -> Type :=
+CoInductive t {E : Effect.t} : forall {A : Type}, C.t E A -> A -> Type :=
 | Ret : forall {A} (x : A), t (C.Ret (E := E) A x) x
 | Call : forall (c : Effect.command E) (answer : Effect.answer E c),
   t (C.Call (E := E) c) answer

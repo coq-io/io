@@ -1,5 +1,5 @@
-Require Import Effect.
 Require Import C.
+Require Import Effect.
 
 (** A specification is an execution of a computation with explicit answers for
     the external calls. *)

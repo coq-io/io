@@ -1,7 +1,7 @@
 Require Import Effect.
 
 (** The description of a computation. *)
-CoInductive t (E : Effect.t) : Type -> Type :=
+Inductive t (E : Effect.t) : Type -> Type :=
 | Ret : forall (A : Type) (x : A), t E A
 | Call : forall (command : Effect.command E), t E (Effect.answer E command)
 | Let : forall (A B : Type), t E A -> (A -> t E B) -> t E B

@@ -17,7 +17,7 @@ Arguments Let {E} _ _ _ _.
 Arguments Choose {E} _ _ _.
 Arguments Join {E} _ _ _ _.
 
-Definition step {E A} (x : IC.t E A) : IC.t E A :=
+Definition unfold {E A} (x : IC.t E A) : IC.t E A :=
   match x with
   | IC.Ret _ v => IC.Ret _ v
   | IC.Call c => IC.Call c
@@ -26,7 +26,7 @@ Definition step {E A} (x : IC.t E A) : IC.t E A :=
   | IC.Join _ _ x y => IC.Join _ _ x y
   end.
 
-Lemma step_eq {E A} (x : IC.t E A) : x = step x.
+Lemma unfold_eq {E A} (x : IC.t E A) : x = unfold x.
   destruct x; reflexivity.
 Qed.
 

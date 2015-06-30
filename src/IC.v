@@ -17,6 +17,19 @@ Arguments Let {E} _ _ _ _.
 Arguments Choose {E} _ _ _.
 Arguments Join {E} _ _ _ _.
 
+Definition step {E A} (x : IC.t E A) : IC.t E A :=
+  match x with
+  | IC.Ret _ v => IC.Ret _ v
+  | IC.Call c => IC.Call c
+  | IC.Let _ _ x f => IC.Let _ _ x f
+  | IC.Choose _ x1 x2 => IC.Choose _ x1 x2
+  | IC.Join _ _ x y => IC.Join _ _ x y
+  end.
+
+Lemma step_eq {E A} (x : IC.t E A) : x = step x.
+  destruct x; reflexivity.
+Qed.
+
 (** A lift from the finite computations. *)
 Fixpoint ilift {E : Effect.t} {A : Type} (x : C.t E A) : t E A :=
   match x with

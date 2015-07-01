@@ -1,4 +1,4 @@
-Require Import C.
+Require C.
 Require Import Effect.
 
 (** A run is an execution of a computation with answers to the calls. *)

@@ -30,6 +30,22 @@ Module I.
   | Join : forall {A B} {c_x : C.I.t E A} {x : A} {c_y : C.I.t E B} {y : B},
     t c_x x -> t c_y y -> t (C.I.Join A B c_x c_y) (x, y).
 
+  Definition unfold {E A} {c_x : C.I.t E A} {v_x : A} (r_x : t c_x v_x)
+    : t c_x v_x :=
+    match r_x with
+    | Ret _ v => Ret v
+    | Call c a => Call c a
+    | Let _ _ _ _ _ _ r_x r_y => Let r_x r_y
+    | ChooseLeft _ _ _ _ r_x1 => ChooseLeft r_x1
+    | ChooseRight _ _ _ _ r_x2 => ChooseRight r_x2
+    | Join _ _ _ _ _ _ r_x r_y => Join r_x r_y
+    end.
+
+  Lemma unfold_eq {E A} {c_x : C.I.t E A} {v_x : A} (r_x : t c_x v_x)
+    : r_x = unfold r_x.
+    destruct r_x; reflexivity.
+  Qed.
+
   Module Eq.
     CoInductive t {E} : forall {A} {x1 x2 : C.I.t E A} {v1 v2 : A},
       Run.I.t x1 v1 -> Run.I.t x2 v2 -> Prop :=

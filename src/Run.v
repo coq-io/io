@@ -63,7 +63,7 @@ Module I.
       t (ChooseLeft (c_x2 := c_x21) r_x11) (ChooseLeft (c_x2 := c_x22) r_x12)
     | ChooseRight : forall A (c_x11 c_x12 c_x21 c_x22 : C.I.t E A)
       (v_x21 v_x22 : A)
-      (r_x21 : Run.I.t c_x11 v_x21) (r_x22 : Run.I.t c_x12 v_x22),
+      (r_x21 : Run.I.t c_x21 v_x21) (r_x22 : Run.I.t c_x22 v_x22),
       t r_x21 r_x22 ->
       t (ChooseRight (c_x1 := c_x11) r_x21) (ChooseRight (c_x1 := c_x12) r_x22)
     | Join : forall A B (c_x1 c_x2 : C.I.t E A) (c_y1 c_y2 : C.I.t E B)

@@ -6,7 +6,7 @@ A library for effects in Coq.
 ## Install
 Using OPAM for Coq:
 
-    opam repo add coq-stable https://github.com/coq/repo-stable.git
+    opam repo add coq-released https://coq.inria.fr/opam/released
     opam install coq:io
 
 ## Documentation

@@ -78,9 +78,9 @@ Module I.
     | Join _ _ x y => Join _ _ x y
     end.
 
-  Lemma unfold_eq {E A} (x : t E A) : x = unfold x.
+  Definition unfold_eq {E A} (x : t E A) : x = unfold x.
     destruct x; reflexivity.
-  Qed.
+  Defined.
 
   (** A lift from the finite computations. *)
   Fixpoint lift {E : Effect.t} {A : Type} (x : C.t E A) : t E A :=

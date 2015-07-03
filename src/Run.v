@@ -41,10 +41,10 @@ Module I.
     | Join _ _ _ _ _ _ r_x r_y => Join r_x r_y
     end.
 
-  Lemma unfold_eq {E A} {c_x : C.I.t E A} {v_x : A} (r_x : t c_x v_x)
+  Definition unfold_eq {E A} {c_x : C.I.t E A} {v_x : A} (r_x : t c_x v_x)
     : r_x = unfold r_x.
     destruct r_x; reflexivity.
-  Qed.
+  Defined.
 
   Module Eq.
     CoInductive t {E} : forall {A} {x1 x2 : C.I.t E A} {v1 v2 : A},

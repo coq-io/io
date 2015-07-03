@@ -4,3 +4,4 @@ src/All.v
 src/C.v
 src/Effect.v
 src/Run.v
+src/Trace.v

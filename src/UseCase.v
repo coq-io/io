@@ -56,3 +56,19 @@ Fixpoint general {E A} (x : C.t E A) : UseCase.t x.
     destruct p as [p_x p_y].
     apply (Run.Join (r_x p_x) (r_y p_y)).
 Defined.
+
+Module I.
+  Record t {E A} (x : C.I.t E A) : Type := New {
+    P : Type;
+    v : P -> A;
+    r : forall p, Run.I.t x (v p) }.
+  Arguments New {E A x} _ _ _.
+  Arguments P {E A x} _.
+  Arguments v {E A x} _ _.
+  Arguments r {E A x} _ _.
+
+  Module Generalize.
+    Definition t {E A} {x : C.I.t E A} (u1 u2 : UseCase.I.t x) : Prop :=
+      forall (p2 : P u2), exists (p1 : P u1), Run.I.Eq.t (r u1 p1) (r u2 p2).
+  End Generalize.
+End I.

@@ -62,7 +62,7 @@ Fixpoint of_run {E A} {x : C.t E A} {v_x : A} (r_x : Run.t x v_x)
   destruct r_x.
   - exists Trace.Ret.
     apply Valid.Ret.
-  - exists (Trace.Call c answer).
+  - exists (Trace.Call c a).
     apply Valid.Call.
   - destruct (of_run _ _ _ _ r_x1) as [t_x H_x].
     destruct (of_run _ _ _ _ r_x2) as [t_y H_y].

@@ -4,8 +4,7 @@ Require Import Effect.
 (** A run is an execution of a computation with answers to the calls. *)
 Inductive t {E : Effect.t} : forall {A : Type}, C.t E A -> A -> Type :=
 | Ret : forall {A} (x : A), t (C.Ret (E := E) A x) x
-| Call : forall (c : Effect.command E) (answer : Effect.answer E c),
-  t (C.Call (E := E) c) answer
+| Call : forall (c : Effect.command E) (a : Effect.answer E c), t (C.Call c) a
 | Let : forall {A B} {c_x : C.t E A} {x : A} {c_f : A -> C.t E B} {y : B},
   t c_x x -> t (c_f x) y -> t (C.Let A B c_x c_f) y
 | ChooseLeft : forall {A} {c_x1 c_x2 : C.t E A} {x1 : A},
@@ -14,6 +13,37 @@ Inductive t {E : Effect.t} : forall {A : Type}, C.t E A -> A -> Type :=
   t c_x2 x2 -> t (C.Choose A c_x1 c_x2) x2
 | Join : forall {A B} {c_x : C.t E A} {x : A} {c_y : C.t E B} {y : B},
   t c_x x -> t c_y y -> t (C.Join A B c_x c_y) (x, y).
+
+Module Notations.
+  Definition ret {E A} (v : A) : t (E := E) (C.Ret _ v) v :=
+    Ret v.
+
+  Definition call (E : Effect.t) (c : Effect.command E) (a : Effect.answer E c)
+    : t (C.Call c) a :=
+    Call c a.
+
+  (** A nicer notation for `Let`. *)
+  Notation "'rlet!' X 'in' Y" :=
+    (Let X Y)
+    (at level 200, X at level 100, Y at level 200).
+
+  (** Let ignoring the unit answer. *)
+  Notation "'rdo!' X 'in' Y" :=
+    (Let (A := unit) X Y)
+    (at level 200, X at level 100, Y at level 200).
+
+  Definition choose_left {E A} {x1 x2 : C.t E A} {v1 : A} (r1 : t x1 v1)
+    : t (C.Choose _ x1 x2) v1 :=
+    ChooseLeft r1.
+
+  Definition choose_right {E A} {x1 x2 : C.t E A} {v2 : A} (r2 : t x2 v2)
+    : t (C.Choose _ x1 x2) v2 :=
+    ChooseRight r2.
+
+  Definition join {E A B} {x : C.t E A} {y : C.t E B} {v_x : A} {v_y : B}
+    (r_x : t x v_x) (r_y : t y v_y) : t (C.Join _ _ x y) (v_x, v_y) :=
+    Join r_x r_y.
+End Notations.
 
 Module I.
   (** A run of an infinite computation. *)
@@ -29,6 +59,37 @@ Module I.
     t c_x2 x2 -> t (C.I.Choose A c_x1 c_x2) x2
   | Join : forall {A B} {c_x : C.I.t E A} {x : A} {c_y : C.I.t E B} {y : B},
     t c_x x -> t c_y y -> t (C.I.Join A B c_x c_y) (x, y).
+
+  Module Notations.
+    Definition ret {E A} (v : A) : t (E := E) (C.I.Ret _ v) v :=
+      Ret v.
+
+    Definition call (E : Effect.t) (c : Effect.command E)
+      (a : Effect.answer E c) : t (C.I.Call c) a :=
+      Call c a.
+
+    (** A nicer notation for `Let`. *)
+    Notation "'rlet!' X 'in' Y" :=
+      (Let X Y)
+      (at level 200, X at level 100, Y at level 200).
+
+    (** Let ignoring the unit answer. *)
+    Notation "'rdo!' X 'in' Y" :=
+      (Let (A := unit) X Y)
+      (at level 200, X at level 100, Y at level 200).
+
+    Definition choose_left {E A} {x1 x2 : C.I.t E A} {v1 : A} (r1 : t x1 v1)
+      : t (C.I.Choose _ x1 x2) v1 :=
+      ChooseLeft r1.
+
+    Definition choose_right {E A} {x1 x2 : C.I.t E A} {v2 : A} (r2 : t x2 v2)
+      : t (C.I.Choose _ x1 x2) v2 :=
+      ChooseRight r2.
+
+    Definition join {E A B} {x : C.I.t E A} {y : C.I.t E B} {v_x : A} {v_y : B}
+      (r_x : t x v_x) (r_y : t y v_y) : t (C.I.Join _ _ x y) (v_x, v_y) :=
+      Join r_x r_y.
+  End Notations.
 
   Definition unfold {E A} {c_x : C.I.t E A} {v_x : A} (r_x : t c_x v_x)
     : t c_x v_x :=

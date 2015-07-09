@@ -20,7 +20,8 @@ Module Notations.
   Definition ret {E} : t E :=
     Ret.
 
-  Definition call {E} (c : Effect.command E) (a : Effect.answer E c) : t E :=
+  Definition call (E : Effect.t) (c : Effect.command E) (a : Effect.answer E c)
+    : t E :=
     Call c a.
 
   (** A nicer notation for `Let`. *)

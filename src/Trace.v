@@ -162,6 +162,29 @@ Module I.
   Arguments ChooseRight {E} _.
   Arguments Join {E} _ _.
 
+  Module Notations.
+    Definition ret {E} : t E :=
+      Ret.
+
+    Definition call (E : Effect.t) (c : Effect.command E)
+      (a : Effect.answer E c) : t E :=
+      Call c a.
+
+    (** A nicer notation for `Let`. *)
+    Notation "'tilet!' X 'in' Y" :=
+      (Let X Y)
+      (at level 200, X at level 100, Y at level 200).
+
+    Definition choose_left {E} (tr : t E) : t E :=
+      ChooseLeft tr.
+
+    Definition choose_right {E} (tr : t E) : t E :=
+      ChooseRight tr.
+
+    Definition join {E} (tr_x tr_y : t E) : t E :=
+      Join tr_x tr_y.
+  End Notations.
+
   Definition unfold {E} (t : Trace.I.t E) : Trace.I.t E :=
     match t with
     | Ret => Ret

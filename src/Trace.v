@@ -16,6 +16,28 @@ Arguments ChooseLeft {E} _.
 Arguments ChooseRight {E} _.
 Arguments Join {E} _ _.
 
+Module Notations.
+  Definition ret {E} : t E :=
+    Ret.
+
+  Definition call {E} (c : Effect.command E) (a : Effect.answer E c) : t E :=
+    Call c a.
+
+  (** A nicer notation for `Let`. *)
+  Notation "'tlet!' X 'in' Y" :=
+    (Let X Y)
+    (at level 200, X at level 100, Y at level 200).
+
+  Definition choose_left {E} (tr : t E) : t E :=
+    ChooseLeft tr.
+
+  Definition choose_right {E} (tr : t E) : t E :=
+    ChooseRight tr.
+
+  Definition join {E} (tr_x tr_y : t E) : t E :=
+    Join tr_x tr_y.
+End Notations.
+
 Module Valid.
   Inductive t {E} : forall {A}, C.t E A -> Trace.t E -> A -> Type :=
   | Ret : forall A (v : A), t (C.Ret A v) Trace.Ret v

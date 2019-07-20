@@ -41,20 +41,20 @@ End Notations.
 
 Module Valid.
   Inductive t {E} : forall {A}, C.t E A -> Trace.t E -> A -> Type :=
-  | Ret : forall A (v : A), t (C.Ret A v) Trace.Ret v
+  | Ret : forall A (v : A), t (C.Ret v) Trace.Ret v
   | Call : forall c (a : Effect.answer E c), t (C.Call c) (Trace.Call c a) a
   | Let : forall A B (x : C.t E A) (f : A -> C.t E B) (t_x t_y : Trace.t E)
     (v_x : A) (v_y : B),
     t x t_x v_x -> t (f v_x) t_y v_y ->
-    t (C.Let _ _ x f) (Trace.Let t_x t_y) v_y
+    t (C.Let x f) (Trace.Let t_x t_y) v_y
   | ChooseLeft : forall A (x1 x2 : C.t E A) (t_x1 : Trace.t E) (v_x1 : A),
-    t x1 t_x1 v_x1 -> t (C.Choose _ x1 x2) (Trace.ChooseLeft t_x1) v_x1
+    t x1 t_x1 v_x1 -> t (C.Choose x1 x2) (Trace.ChooseLeft t_x1) v_x1
   | ChooseRight : forall A (x1 x2 : C.t E A) (t_x2 : Trace.t E) (v_x2 : A),
-    t x2 t_x2 v_x2 -> t (C.Choose _ x1 x2) (Trace.ChooseRight t_x2) v_x2
+    t x2 t_x2 v_x2 -> t (C.Choose x1 x2) (Trace.ChooseRight t_x2) v_x2
   | Join : forall A B (x : C.t E A) (y : C.t E B) (t_x t_y : Trace.t E)
     (v_x : A) (v_y : B),
     t x t_x v_x -> t y t_y v_y ->
-    t (C.Join _ _ x y) (Trace.Join t_x t_y) (v_x, v_y).
+    t (C.Join x y) (Trace.Join t_x t_y) (v_x, v_y).
 End Valid.
 
 Fixpoint of_run {E A} {x : C.t E A} {v_x : A} (r_x : Run.t x v_x)
@@ -215,21 +215,21 @@ Module I.
 
   Module Valid.
     CoInductive t {E} : forall {A}, C.I.t E A -> Trace.I.t E -> A -> Type :=
-    | Ret : forall A (v : A), t (C.I.Ret A v) Trace.I.Ret v
+    | Ret : forall A (v : A), t (C.I.Ret v) Trace.I.Ret v
     | Call : forall c (a : Effect.answer E c),
       t (C.I.Call c) (Trace.I.Call c a) a
     | Let : forall A B (x : C.I.t E A) (f : A -> C.I.t E B)
       (t_x t_y : Trace.I.t E) (v_x : A) (v_y : B),
       t x t_x v_x -> t (f v_x) t_y v_y ->
-      t (C.I.Let _ _ x f) (Trace.I.Let t_x t_y) v_y
+      t (C.I.Let x f) (Trace.I.Let t_x t_y) v_y
     | ChooseLeft : forall A (x1 x2 : C.I.t E A) (t_x1 : Trace.I.t E) (v_x1 : A),
-      t x1 t_x1 v_x1 -> t (C.I.Choose _ x1 x2) (Trace.I.ChooseLeft t_x1) v_x1
+      t x1 t_x1 v_x1 -> t (C.I.Choose x1 x2) (Trace.I.ChooseLeft t_x1) v_x1
     | ChooseRight : forall A (x1 x2 : C.I.t E A) (t_x2 : Trace.I.t E) (v_x2 : A),
-      t x2 t_x2 v_x2 -> t (C.I.Choose _ x1 x2) (Trace.I.ChooseRight t_x2) v_x2
+      t x2 t_x2 v_x2 -> t (C.I.Choose x1 x2) (Trace.I.ChooseRight t_x2) v_x2
     | Join : forall A B (x : C.I.t E A) (y : C.I.t E B) (t_x t_y : Trace.I.t E)
       (v_x : A) (v_y : B),
       t x t_x v_x -> t y t_y v_y ->
-      t (C.I.Join _ _ x y) (Trace.I.Join t_x t_y) (v_x, v_y).
+      t (C.I.Join x y) (Trace.I.Join t_x t_y) (v_x, v_y).
     Arguments Ret {E A} _.
     Arguments Call {E} _ _.
     Arguments Let {E A B x f t_x t_y v_x v_y} _ _.

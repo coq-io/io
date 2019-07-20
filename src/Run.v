@@ -1,5 +1,5 @@
 Require C.
-Require Import Effect.
+Require Effect.
 
 (** A run is an execution of a computation with answers to the calls. *)
 Inductive t {E : Effect.t} : forall {A : Type}, C.t E A -> A -> Type :=

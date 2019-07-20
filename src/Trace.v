@@ -240,12 +240,12 @@ Module I.
     Definition unfold {E A} {x : C.I.t E A} {t : Trace.I.t E} {v : A}
       (H : Valid.t x t v) : Valid.t x t v :=
       match H with
-      | Ret _ v => Ret v
+      | Ret v => Ret v
       | Call c a => Call c a
-      | Let _ _ _ _ _ _ _ _ H_x H_f => Let H_x H_f
-      | ChooseLeft _ _ _ _ _ H_x1 => ChooseLeft H_x1
-      | ChooseRight _ _ _ _ _ H_x2 => ChooseRight H_x2
-      | Join _ _ _ _ _ _ _ _ H_x H_y => Join H_x H_y
+      | Let H_x H_f => Let H_x H_f
+      | ChooseLeft H_x1 => ChooseLeft H_x1
+      | ChooseRight H_x2 => ChooseRight H_x2
+      | Join H_x H_y => Join H_x H_y
       end.
 
     Definition unfold_eq {E A} {x : C.I.t E A} {t : Trace.I.t E} {v : A}

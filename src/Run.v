@@ -94,12 +94,12 @@ Module I.
   Definition unfold {E A} {c_x : C.I.t E A} {v_x : A} (r_x : t c_x v_x)
     : t c_x v_x :=
     match r_x with
-    | Ret _ v => Ret v
+    | Ret v => Ret v
     | Call c a => Call c a
-    | Let _ _ _ _ _ _ r_x r_y => Let r_x r_y
-    | ChooseLeft _ _ _ _ r_x1 => ChooseLeft r_x1
-    | ChooseRight _ _ _ _ r_x2 => ChooseRight r_x2
-    | Join _ _ _ _ _ _ r_x r_y => Join r_x r_y
+    | Let r_x r_y => Let r_x r_y
+    | ChooseLeft r_x1 => ChooseLeft r_x1
+    | ChooseRight r_x2 => ChooseRight r_x2
+    | Join r_x r_y => Join r_x r_y
     end.
 
   Definition unfold_eq {E A} {c_x : C.I.t E A} {v_x : A} (r_x : t c_x v_x)

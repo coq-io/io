@@ -8,7 +8,6 @@ services:
 env:
   global:
   - OPAMJOBS="2"
-  - CONTRIB_NAME="demo"
   matrix:
   - COQ_IMAGE="coqorg/coq:8.5"
   - COQ_IMAGE="coqorg/coq:8.6"
@@ -35,7 +34,7 @@ install: |
     " install
 
 script:
-- echo -e "${ANSI_YELLOW}Building ${CONTRIB_NAME}...${ANSI_RESET}" && echo -en 'travis_fold:start:script\\r'
+- echo -e "${ANSI_YELLOW}Building...${ANSI_RESET}" && echo -en 'travis_fold:start:script\\r'
 - |
   docker exec COQ /bin/bash --login -c "
     export PS4='+ \e[33;1m(\$0 @ line \$LINENO) \$\e[0m '

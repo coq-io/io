@@ -1,7 +1,7 @@
 # ![Logo](https://raw.githubusercontent.com/clarus/icons/master/megaphone-48.png) IO
-> A library for effects in Coq.
+> A library for effects in Coq. http://coq.io/
 
-http://coq.io/
+[![build status](https://img.shields.io/travis/coq-io/io.svg)](https://travis-ci.org/coq-io/io)
 
 ## Install
 Using [OPAM for Coq](coq.io/opam/):

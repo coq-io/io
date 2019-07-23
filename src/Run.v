@@ -1,21 +1,21 @@
 Require C.
-Require Import Effect.
+Require Effect.
 
 (** A run is an execution of a computation with answers to the calls. *)
 Inductive t {E : Effect.t} : forall {A : Type}, C.t E A -> A -> Type :=
-| Ret : forall {A} (x : A), t (C.Ret (E := E) A x) x
+| Ret : forall {A} (x : A), t (C.Ret (E := E) x) x
 | Call : forall (c : Effect.command E) (a : Effect.answer E c), t (C.Call c) a
 | Let : forall {A B} {c_x : C.t E A} {x : A} {c_f : A -> C.t E B} {y : B},
-  t c_x x -> t (c_f x) y -> t (C.Let A B c_x c_f) y
+  t c_x x -> t (c_f x) y -> t (C.Let c_x c_f) y
 | ChooseLeft : forall {A} {c_x1 c_x2 : C.t E A} {x1 : A},
-  t c_x1 x1 -> t (C.Choose A c_x1 c_x2) x1
+  t c_x1 x1 -> t (C.Choose c_x1 c_x2) x1
 | ChooseRight : forall {A} {c_x1 c_x2 : C.t E A} {x2 : A},
-  t c_x2 x2 -> t (C.Choose A c_x1 c_x2) x2
+  t c_x2 x2 -> t (C.Choose c_x1 c_x2) x2
 | Join : forall {A B} {c_x : C.t E A} {x : A} {c_y : C.t E B} {y : B},
-  t c_x x -> t c_y y -> t (C.Join A B c_x c_y) (x, y).
+  t c_x x -> t c_y y -> t (C.Join c_x c_y) (x, y).
 
 Module Notations.
-  Definition ret {E A} (v : A) : t (E := E) (C.Ret _ v) v :=
+  Definition ret {E A} (v : A) : t (E := E) (C.Ret v) v :=
     Ret v.
 
   Definition call (E : Effect.t) (c : Effect.command E) (a : Effect.answer E c)
@@ -33,35 +33,35 @@ Module Notations.
     (at level 200, X at level 100, Y at level 200).
 
   Definition choose_left {E A} {x1 x2 : C.t E A} {v1 : A} (r1 : t x1 v1)
-    : t (C.Choose _ x1 x2) v1 :=
+    : t (C.Choose x1 x2) v1 :=
     ChooseLeft r1.
 
   Definition choose_right {E A} {x1 x2 : C.t E A} {v2 : A} (r2 : t x2 v2)
-    : t (C.Choose _ x1 x2) v2 :=
+    : t (C.Choose x1 x2) v2 :=
     ChooseRight r2.
 
   Definition join {E A B} {x : C.t E A} {y : C.t E B} {v_x : A} {v_y : B}
-    (r_x : t x v_x) (r_y : t y v_y) : t (C.Join _ _ x y) (v_x, v_y) :=
+    (r_x : t x v_x) (r_y : t y v_y) : t (C.Join x y) (v_x, v_y) :=
     Join r_x r_y.
 End Notations.
 
 Module I.
   (** A run of an infinite computation. *)
   CoInductive t {E : Effect.t} : forall {A : Type}, C.I.t E A -> A -> Type :=
-  | Ret : forall {A} (x : A), t (C.I.Ret (E := E) A x) x
+  | Ret : forall {A} (x : A), t (C.I.Ret (E := E) x) x
   | Call : forall (c : Effect.command E) (answer : Effect.answer E c),
     t (C.I.Call (E := E) c) answer
   | Let : forall {A B} {c_x : C.I.t E A} {x : A} {c_f : A -> C.I.t E B} {y : B},
-    t c_x x -> t (c_f x) y -> t (C.I.Let A B c_x c_f) y
+    t c_x x -> t (c_f x) y -> t (C.I.Let c_x c_f) y
   | ChooseLeft : forall {A} {c_x1 c_x2 : C.I.t E A} {x1 : A},
-    t c_x1 x1 -> t (C.I.Choose A c_x1 c_x2) x1
+    t c_x1 x1 -> t (C.I.Choose c_x1 c_x2) x1
   | ChooseRight : forall {A} {c_x1 c_x2 : C.I.t E A} {x2 : A},
-    t c_x2 x2 -> t (C.I.Choose A c_x1 c_x2) x2
+    t c_x2 x2 -> t (C.I.Choose c_x1 c_x2) x2
   | Join : forall {A B} {c_x : C.I.t E A} {x : A} {c_y : C.I.t E B} {y : B},
-    t c_x x -> t c_y y -> t (C.I.Join A B c_x c_y) (x, y).
+    t c_x x -> t c_y y -> t (C.I.Join c_x c_y) (x, y).
 
   Module Notations.
-    Definition ret {E A} (v : A) : t (E := E) (C.I.Ret _ v) v :=
+    Definition ret {E A} (v : A) : t (E := E) (C.I.Ret v) v :=
       Ret v.
 
     Definition call (E : Effect.t) (c : Effect.command E)
@@ -79,27 +79,27 @@ Module I.
       (at level 200, X at level 100, Y at level 200).
 
     Definition choose_left {E A} {x1 x2 : C.I.t E A} {v1 : A} (r1 : t x1 v1)
-      : t (C.I.Choose _ x1 x2) v1 :=
+      : t (C.I.Choose x1 x2) v1 :=
       ChooseLeft r1.
 
     Definition choose_right {E A} {x1 x2 : C.I.t E A} {v2 : A} (r2 : t x2 v2)
-      : t (C.I.Choose _ x1 x2) v2 :=
+      : t (C.I.Choose x1 x2) v2 :=
       ChooseRight r2.
 
     Definition join {E A B} {x : C.I.t E A} {y : C.I.t E B} {v_x : A} {v_y : B}
-      (r_x : t x v_x) (r_y : t y v_y) : t (C.I.Join _ _ x y) (v_x, v_y) :=
+      (r_x : t x v_x) (r_y : t y v_y) : t (C.I.Join x y) (v_x, v_y) :=
       Join r_x r_y.
   End Notations.
 
   Definition unfold {E A} {c_x : C.I.t E A} {v_x : A} (r_x : t c_x v_x)
     : t c_x v_x :=
     match r_x with
-    | Ret _ v => Ret v
+    | Ret v => Ret v
     | Call c a => Call c a
-    | Let _ _ _ _ _ _ r_x r_y => Let r_x r_y
-    | ChooseLeft _ _ _ _ r_x1 => ChooseLeft r_x1
-    | ChooseRight _ _ _ _ r_x2 => ChooseRight r_x2
-    | Join _ _ _ _ _ _ r_x r_y => Join r_x r_y
+    | Let r_x r_y => Let r_x r_y
+    | ChooseLeft r_x1 => ChooseLeft r_x1
+    | ChooseRight r_x2 => ChooseRight r_x2
+    | Join r_x r_y => Join r_x r_y
     end.
 
   Definition unfold_eq {E A} {c_x : C.I.t E A} {v_x : A} (r_x : t c_x v_x)

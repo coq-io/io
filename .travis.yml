@@ -30,6 +30,7 @@ install: |
     opam install coq-io --deps-only
     opam config list
     opam repo list
+    opam pin list
     opam list
     " install
 

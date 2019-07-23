@@ -27,6 +27,8 @@ install: |
     set -ex  # -e = exit on failure; -x = trace for debug
     if [ -n \"\${COMPILER_EDGE}\" ]; then opam switch \${COMPILER_EDGE}; eval \$(opam env); fi
     opam update -y
+    opam pin add coq-io.opam . --kind=path -y
+    opam install coq-io --deps-only
     opam config list
     opam repo list
     opam list
@@ -39,8 +41,7 @@ script:
     export PS4='+ \e[33;1m(\$0 @ line \$LINENO) \$\e[0m '
     set -ex
     sudo chown -R coq:coq /home/project
-    ./configure.sh
-    ( make && make install )
+    opam install coq-io
     " script
 - docker stop COQ  # optional
 - echo -en 'travis_fold:end:script\\r'

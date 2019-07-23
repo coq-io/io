@@ -7,7 +7,7 @@ services:
 
 env:
   global:
-  - NJOBS="2"
+  - OPAMJOBS="2"
   - CONTRIB_NAME="demo"
   matrix:
   - COQ_IMAGE="coqorg/coq:8.5"

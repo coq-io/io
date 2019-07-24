@@ -8,7 +8,9 @@ services:
 env:
   global:
   - OPAMJOBS="2"
+  - PACKAGE_NAME="coq-io"
   matrix:
+  - COQ_IMAGE="coqorg/coq:8.4"
   - COQ_IMAGE="coqorg/coq:8.5"
   - COQ_IMAGE="coqorg/coq:8.6"
   - COQ_IMAGE="coqorg/coq:8.7"
@@ -24,10 +26,8 @@ install: |
     echo \"Build triggered by ${TRAVIS_EVENT_TYPE}\"
     export PS4='+ \e[33;1m(\$0 @ line \$LINENO) \$\e[0m '
     set -ex  # -e = exit on failure; -x = trace for debug
-    if [ -n \"\${COMPILER_EDGE}\" ]; then opam switch \${COMPILER_EDGE}; eval \$(opam env); fi
     opam update -y
-    opam pin add coq-io.opam . --kind=path -y --no-action
-    opam install coq-io --deps-only
+    opam pin add ${PACKAGE_NAME}.opam . --kind=path -y --no-action
     opam config list
     opam repo list
     opam pin list
@@ -41,7 +41,14 @@ script:
     export PS4='+ \e[33;1m(\$0 @ line \$LINENO) \$\e[0m '
     set -ex
     sudo chown -R coq:coq /home/project
-    opam install coq-io -v
+    # Check if the package is compatible with the current environment
+    if opam install ${PACKAGE_NAME} --show-action; then
+      # First install the dependencies
+      opam install ${PACKAGE_NAME} --deps-only
+      opam list
+      # Then install the package itself in verbose mode
+      opam install ${PACKAGE_NAME} -v
+    fi;
     " script
 - docker stop COQ  # optional
 - echo -en 'travis_fold:end:script\\r'

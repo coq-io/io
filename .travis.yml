@@ -7,7 +7,6 @@ services:
 
 env:
   global:
-  - OPAMJOBS="2"
   - PACKAGE_NAME="coq-io"
   matrix:
   - COQ_IMAGE="coqorg/coq:8.4"
@@ -26,8 +25,8 @@ install: |
     echo \"Build triggered by ${TRAVIS_EVENT_TYPE}\"
     export PS4='+ \e[33;1m(\$0 @ line \$LINENO) \$\e[0m '
     set -ex  # -e = exit on failure; -x = trace for debug
-    opam update -y
-    opam pin add ${PACKAGE_NAME}.opam . --kind=path -y --no-action
+    opam update
+    opam pin add ${PACKAGE_NAME}.opam . --kind=path --no-action
     opam config list
     opam repo list
     opam pin list
@@ -44,7 +43,7 @@ script:
     # Check if the package is compatible with the current environment
     if opam install ${PACKAGE_NAME} --show-action; then
       # First install the dependencies
-      opam install ${PACKAGE_NAME} --deps-only
+      opam install ${PACKAGE_NAME} --deps-only -y
       opam list
       # Then install the package itself in verbose mode
       opam install ${PACKAGE_NAME} -v

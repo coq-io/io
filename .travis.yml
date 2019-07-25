@@ -10,11 +10,11 @@ env:
   - PACKAGE_NAME="coq-io"
   matrix:
   - COQ_IMAGE="coqorg/coq:8.4"
-  - COQ_IMAGE="coqorg/coq:8.5"
-  - COQ_IMAGE="coqorg/coq:8.6"
-  - COQ_IMAGE="coqorg/coq:8.7"
-  - COQ_IMAGE="coqorg/coq:8.8"
-  - COQ_IMAGE="coqorg/coq:8.9"
+  - COQ_IMAGE="coqorg/coq:8.5" SHOULD_SUPPORT="true"
+  - COQ_IMAGE="coqorg/coq:8.6" SHOULD_SUPPORT="true"
+  - COQ_IMAGE="coqorg/coq:8.7" SHOULD_SUPPORT="true"
+  - COQ_IMAGE="coqorg/coq:8.8" SHOULD_SUPPORT="true"
+  - COQ_IMAGE="coqorg/coq:8.9" SHOULD_SUPPORT="true"
 
 install: |
   # Prepare the COQ container
@@ -41,7 +41,7 @@ script:
     set -ex
     sudo chown -R coq:coq /home/project
     # Check if the package is compatible with the current environment
-    if opam install ${PACKAGE_NAME} --show-action; then
+    if [ ${SHOULD_SUPPORT} ] || opam install ${PACKAGE_NAME} --show-action; then
       # First install the dependencies
       opam install ${PACKAGE_NAME} --deps-only -y
       opam list

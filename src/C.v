@@ -37,12 +37,12 @@ Module Notations.
   (** A nicer notation for `Let`. *)
   Notation "'let!' x ':=' X 'in' Y" :=
     (Let X (fun x => Y))
-    (at level 200, x ident, X at level 100, Y at level 200).
+    (at level 200, x name, X at level 100, Y at level 200).
 
   (** Let with a typed answer. *)
   Notation "'let!' x : A ':=' X 'in' Y" :=
     (Let X (fun (x : A) => Y))
-    (at level 200, x ident, X at level 100, A at level 200, Y at level 200).
+    (at level 200, x name, X at level 100, A at level 200, Y at level 200).
 
   (** Let ignoring the unit answer. *)
   Notation "'do!' X 'in' Y" :=
@@ -111,12 +111,12 @@ Module I.
     (** A nicer notation for `Let`. *)
     Notation "'ilet!' x ':=' X 'in' Y" :=
       (Let X (fun x => Y))
-      (at level 200, x ident, X at level 100, Y at level 200).
+      (at level 200, x name, X at level 100, Y at level 200).
 
     (** Let with a typed answer. *)
     Notation "'ilet!' x : A ':=' X 'in' Y" :=
       (Let X (fun (x : A) => Y))
-      (at level 200, x ident, X at level 100, A at level 200, Y at level 200).
+      (at level 200, x name, X at level 100, A at level 200, Y at level 200).
 
     (** Let ignoring the unit answer. *)
     Notation "'ido!' X 'in' Y" :=
